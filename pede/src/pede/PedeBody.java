@@ -16,7 +16,7 @@ public class PedeBody extends GameObject {
 	{
 		bound = new BoundingParallelogram(1, 1, 14, 14);
 		sprite = new GameSprite();
-		sprite.addFrame("Body.png", 7.5, 7.5, new Color(255, 0, 255));
+		sprite.addFrame("images/Body.png", 7.5, 7.5, new Color(255, 0, 255));
 		
 		this.next = next;
 		if(next != null)

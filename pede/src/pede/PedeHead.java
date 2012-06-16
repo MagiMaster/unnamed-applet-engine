@@ -13,7 +13,7 @@ public class PedeHead extends PedeBody {
 	{
 		super(null);
 		sprite = new GameSprite();
-		sprite.addFrame("Head.png", 7.5, 7.5, new Color(255, 0, 255));
+		sprite.addFrame("images/Head.png", 7.5, 7.5, new Color(255, 0, 255));
 		state = State.RIGHT;
 	}
 

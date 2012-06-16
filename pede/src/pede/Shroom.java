@@ -10,7 +10,7 @@ public class Shroom extends GameObject {
 	{
 		bound = new BoundingParallelogram(0, 0, 16, 16);
 		sprite = new GameSprite(0.0);
-		sprite.addFilmstrip("Shroom.png", 7.5, 7.5, 16, 16, 0, 0, 0, 0, 4, 1, new Color(255, 0, 255));
+		sprite.addFilmstrip("images/Shroom.png", 7.5, 7.5, 16, 16, 0, 0, 0, 0, 4, 1, new Color(255, 0, 255));
 		hp = 4;
 	}
 

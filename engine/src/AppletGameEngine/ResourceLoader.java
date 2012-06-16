@@ -2,10 +2,9 @@ package AppletGameEngine;
 
 import java.applet.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.net.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Loads images and sound.
@@ -16,51 +15,14 @@ import java.util.regex.Pattern;
 public class ResourceLoader
 {
 	/**
-	 * An URL object that contains the url to the current image directory.
-	 */
-	private static URL url = null;
-	
-	/**
-	 *
+	 * A cache for images
 	 */
 	private static Map<String, Image> images = null;
 
-	private static Map<String, AudioClip> sounds = null;
-
 	/**
-	 * Sets the url of the image directory to <code>s</code>.
-	 *
-	 * @param s         the url of the image directory
+	 * A cache for audio
 	 */
-	public static void setURL(String s)
-	{
-		if(s == null)
-		{
-			url = null;
-			return;
-		}
-		
-		try
-		{
-			url = new URL(s);
-		}
-		catch (java.net.MalformedURLException e0)
-		{
-			if(Pattern.matches(".*protocol.*", e0.toString()))
-			{
-				try
-				{
-					url = new URL("http://" + s);
-				}
-				catch (java.net.MalformedURLException e1)
-				{
-					url = null;
-				}
-			}
-			else
-				url = null;
-		}
-	}
+	private static Map<String, AudioClip> sounds = null;
 
 	/**
 	 * Returns the <code>Image</code> called <code>filename</code> found
@@ -78,23 +40,10 @@ public class ResourceLoader
 		if(images.containsKey(filename))
 			return images.get(filename);
 
-		if(url == null)
-		{
-			Image img = Toolkit.getDefaultToolkit().createImage(filename);
-			images.put(filename, img);
-			return img;
-		}
-
-		try
-		{
-			Image img = Toolkit.getDefaultToolkit().createImage(new URL(url, filename));
-			images.put(filename, img);
-			return img;
-		}
-		catch(MalformedURLException e)
-		{
-			return null;
-		}
+		URL fileURL = Game.applet.getClass().getResource(filename);
+		Image img = Toolkit.getDefaultToolkit().createImage(fileURL);
+		images.put(filename, img);
+		return img;
 	}
 
 	/**
@@ -125,39 +74,18 @@ public class ResourceLoader
 			return img;
 		}
 
-		if(url == null)
-		{
-			Image img = Toolkit.getDefaultToolkit().createImage(filename);
+		URL fileURL = Game.applet.getClass().getResource("/" + filename);
+		Image img = Toolkit.getDefaultToolkit().createImage(fileURL);
 
-			MediaTracker mt = new MediaTracker(new Canvas());
-			mt.addImage(img, 0);
-			try
-			{
-				mt.waitForAll();
-			} catch (InterruptedException e) {}
-
-			images.put(filename, img);
-			return img;
-		}
-
+		MediaTracker mt = new MediaTracker(new Canvas());
+		mt.addImage(img, 0);
 		try
 		{
-			Image img = Toolkit.getDefaultToolkit().createImage(new URL(url, filename));
+			mt.waitForAll();
+		} catch (InterruptedException e) {}
 
-			MediaTracker mt = new MediaTracker(new Canvas());
-			mt.addImage(img, 0);
-			try
-			{
-				mt.waitForAll();
-			} catch (InterruptedException e) {}
-
-			images.put(filename, img);
-			return img;
-		}
-		catch(MalformedURLException e)
-		{
-			return null;
-		}
+		images.put(filename, img);
+		return img;
 	}
 
 	/**
@@ -167,31 +95,38 @@ public class ResourceLoader
 	 * @param c         the <code>Color</code> to make transparent
 	 * @return          A new image with <code>c</code> made transparent.
 	 */
-	public static Image loadImageTransparent(String filename, Color c)
+	public static Image loadImageTransparent(String filename, final Color c)
 	{
+		if(images == null)
+			images = new HashMap<String, Image>();
+
+		if(images.containsKey(filename + "@" + c.toString()))
+			return images.get(filename + "@" + c.toString());
+
 		Image img = loadImageBlocking(filename);
-		
-		int w = img.getWidth(null);
-		int h = img.getHeight(null);
-		
-		BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D)out.getGraphics();
-		g.setComposite(AlphaComposite.Src);
-		g.drawImage(img, 0, 0, null);
-		g.dispose();
-		
+
+		ImageFilter filter = new RGBImageFilter()
+		{
+			public final int filterRGB(int x, int y, int rgb)
+			{
+				if(rgb == c.getRGB())
+					return 0;
+				else
+					return rgb;
+			}
+		};
+
+		ImageProducer ip = new FilteredImageSource(img.getSource(), filter);
+		Image out = Toolkit.getDefaultToolkit().createImage(ip);
+
 		MediaTracker mt = new MediaTracker(new Canvas());
-		mt.addImage(out, 1);
+		mt.addImage(out, 0);
 		try
 		{
 			mt.waitForAll();
-		} catch(InterruptedException e) {}
-		
-		for(int y = 0; y < h; ++y)
-			for(int x = 0; x < w; ++x)
-				if(out.getRGB(x, y) == c.getRGB())
-					out.setRGB(x, y, 0);
-		
+		} catch (InterruptedException e) {}
+
+		images.put(filename + "@" + c.toString(), out);
 		return out;
 	}
 	
@@ -209,23 +144,10 @@ public class ResourceLoader
 		if(sounds.containsKey(filename))
 			return sounds.get(filename);
 
-		if(url == null)
-		{
-			AudioClip audio = Game.applet.getAudioClip(Game.applet.getDocumentBase(), filename);
-			sounds.put(filename, audio);
-			return audio;
-		}
-
-		try
-		{
-			AudioClip audio = Game.applet.getAudioClip(new URL(url, filename));
-			sounds.put(filename, audio);
-			return audio;
-		}
-		catch(MalformedURLException e)
-		{
-			return null;
-		}
+		URL fileURL = Game.applet.getClass().getResource("/" + filename);
+		AudioClip audio = Game.applet.getAudioClip(fileURL);
+		sounds.put(filename, audio);
+		return audio;
 	}
 	
 	/**

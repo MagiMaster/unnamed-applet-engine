@@ -11,7 +11,7 @@ public class Player extends GameObject {
 	{
 		bound = new BoundingParallelogram(0, 0, 16, 16);
 		sprite = new GameSprite(0.0);
-		sprite.addFrame("Ship.png", 7.5, 7.5, new Color(255, 0, 255));
+		sprite.addFrame("images/Ship.png", 7.5, 7.5, new Color(255, 0, 255));
 		ready = true;
 	}
 	

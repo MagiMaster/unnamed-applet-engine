@@ -30,19 +30,15 @@ public abstract class AppletMain extends Applet implements Runnable, MouseListen
 		setFocusable(true);
 
 		Game.init(this);
-		Game.setURL(setup());
+		setup();
 	
 		thread = new Thread(this);
 	}
 
 	/**
-	 * Method for creating instances of objects at game startup. It must return
-	 * either the URL (as a String) of the site on which this game will run, or
-	 * null if it will be run on the local machine.
-	 * 
-	 * @return		the URL of the site running this game, or null
+	 * Method for creating instances of objects at game startup.
 	 */
-	public abstract String setup();
+	public abstract void setup();
 
 	public void start()
 	{

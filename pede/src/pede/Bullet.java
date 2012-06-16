@@ -10,7 +10,7 @@ public class Bullet extends GameObject {
 	{
 		bound = new BoundingParallelogram(5, 1, 6, 14);
 		sprite = new GameSprite(0.0);
-		sprite.addFrame("Bullet.png", 7.5, 7.5, new Color(255, 0, 255));
+		sprite.addFrame("images/Bullet.png", 7.5, 7.5, new Color(255, 0, 255));
 		this.p = p;
 	}
 	

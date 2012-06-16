@@ -26,7 +26,7 @@ public class PedeMain extends AppletMain
 		grid[x][y] = s;
 	}
 
-	public String setup()
+	public void setup()
 	{
 		Player p = new Player();
 		p.translateWorldSpace(0+7.5, 464+7.5);
@@ -48,7 +48,5 @@ public class PedeMain extends AppletMain
 			pede.translateWorldSpace(7.5, 7.5);
 			Game.addObject(pede);
 		}
-
-		return null;
 	}
 }

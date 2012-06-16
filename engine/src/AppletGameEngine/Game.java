@@ -38,11 +38,6 @@ public class Game
 		timeLeft = 0.0;
 	}
 	
-	public static void setURL(String url)
-	{
-		ResourceLoader.setURL(url);
-	}
-	
 	public static void update()
 	{
 		long t = System.currentTimeMillis();
