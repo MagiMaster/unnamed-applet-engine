@@ -15,6 +15,13 @@ public class PedeMain extends AppletMain
 {
 	public static Shroom[][] grid = new Shroom[30][30];
 
+	/* // Uncomment this to run as a standalone application
+	public static void main(String[] args)
+	{
+		AppletFrame frame = new AppletFrame("Pede", 480, 480, new PedeMain());
+	}
+	*/
+
 	public static void addShroom(int x, int y)
 	{
 		if((x < 0) || (y < 0) || (x >= 30) || (y >= 30) || (grid[x][y] != null))

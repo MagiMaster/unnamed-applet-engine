@@ -15,6 +15,7 @@ public abstract class AppletMain extends Applet implements Runnable, MouseListen
 	private Image offscreen;        // Offscreen rendering target
 	private Graphics2D buffer;      // Offscreen rendering target
 	private Thread thread;          // The thread animating this applet
+	private Boolean running;		// Is the thread currently running
 
 	// -- Applet Functions --
 	public void init()
@@ -24,14 +25,15 @@ public abstract class AppletMain extends Applet implements Runnable, MouseListen
 		buffer.setBackground(Color.black);
 		buffer.setColor(Color.white);
 
+		Game.init(this);
+		setup();
+
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
 
-		Game.init(this);
-		setup();
-	
+		running = false;
 		thread = new Thread(this);
 	}
 
@@ -44,12 +46,18 @@ public abstract class AppletMain extends Applet implements Runnable, MouseListen
 	{
 		thread.start();	
 	}
-	
+
+	public void destroy()
+	{
+		thread = null;
+	}
+
 	/**
 	 * The main game loop.
 	 */
 	public void run()
 	{
+		running = true;
 		while(Thread.currentThread() == thread)
 		{
 			Game.update();
@@ -67,6 +75,12 @@ public abstract class AppletMain extends Applet implements Runnable, MouseListen
 				break;
 			}
 		}
+		running = false;
+	}
+
+	public Boolean isRunning()
+	{
+		return running;
 	}
 
 	public void paint(Graphics g)
