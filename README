@@ -1,1 +1,14 @@
-Run the PedeMain.java file from within NetBeans.
+To compile and run the example program:
+- Open the pede project in NetBeans.
+- It should say there's a reference problem. Hit OK.
+- Right click on the pede project (in bold) and click Resolve Reference Problems.
+- Locate and select the engine folder.
+- Do a Clean and Rebuild.
+- Right click on the PedeMain.java file and Run File.
+
+To run the applet in a browser:
+- Compile the program as above.
+- Create a new folder
+- Copy the PedeMain.html file (in the pede/build directory)
+- Copy the pede classes folder (also in the pede/build directory)
+- Copy the engine classes folder (in the engine/build directory)
